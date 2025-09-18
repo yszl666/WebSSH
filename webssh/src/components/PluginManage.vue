@@ -15,7 +15,7 @@
           </template>
           </el-table-column>
           <el-table-column sortable prop="created_at" label="创建时间" width="180"></el-table-column>
-          <el-table-column fixed="right" label="操作">
+          <el-table-column fixed="right" label="操作" width="600">
             <template #header>
               <el-button type="primary" @click="addPlugin">新增</el-button>
               <el-button type="primary" @click="getPluginList(0, 10000)">刷新</el-button>
@@ -25,7 +25,6 @@
               <el-button type="success" @click="togglePluginStatus(scope.row)">
                 {{ scope.row.status === 'enabled' ? '禁用' : '启用' }}
               </el-button>
-              <el-button type="info" @click="viewPlugin(scope.row)">预览</el-button>
               <el-button type="primary" @click="viewPlugin(scope.row)">访问</el-button>
               <el-popconfirm confirmButtonText="删除" cancelButtonText="取消" icon="el-icon-info" iconColor="red"
                 title="确定删除吗" @confirm="deletePluginById(scope.row.id)">
