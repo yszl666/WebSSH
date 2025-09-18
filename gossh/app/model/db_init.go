@@ -109,7 +109,7 @@ func DbMigrate(dbType, dsn string) error {
 	err := Db.AutoMigrate(
 		SshConf{}, WebUser{}, CmdNote{},
 		NetFilter{}, PolicyConf{}, LoginAudit{},
-		SshdConf{}, SshdUser{}, SshdCert{})
+		SshdConf{}, SshdUser{}, SshdCert{}, Plugin{})
 	if err != nil {
 		slog.Error("AutoMigrate error:", "err_msg", err.Error())
 		return err

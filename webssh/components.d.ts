@@ -47,6 +47,7 @@ declare module 'vue' {
     ElTooltip: typeof import('element-plus/es')['ElTooltip']
     LoginAudit: typeof import('./src/components/LoginAudit.vue')['default']
     NetFilter: typeof import('./src/components/NetFilter.vue')['default']
+    PluginManage: typeof import('./src/components/PluginManage.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     SshdCert: typeof import('./src/components/SshdCert.vue')['default']

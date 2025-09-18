@@ -1,5 +1,4 @@
 {
-  "extends": "@tsconfig/node22/tsconfig.json",
   "include": [
     "vite.config.*",
     "vitest.config.*",
@@ -14,6 +13,9 @@
 
     "module": "ESNext",
     "moduleResolution": "Bundler",
-    "types": ["node"]
+    "types": ["node"],
+    "lib": ["es2023", "dom"],
+    "target": "es2022",
+    "skipLibCheck": true
   }
 }

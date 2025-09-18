@@ -16,7 +16,18 @@ import (
 	"path"
 	"path/filepath"
 	"strings"
+	"sync"
 )
+
+// 插件路由缓存，用于存储动态添加的插件路由
+var pluginRoutes = struct {
+	routes map[string]*http.Handler
+	mu     sync.RWMutex
+}{routes: make(map[string]*http.Handler)}
+
+// 插件文件系统，用于提供插件前端文件访问
+// 这个结构可以根据插件配置动态加载不同的插件文件系统
+
 
 // 使用go 1.16+ 新特性
 //
@@ -161,6 +172,61 @@ func main() {
 	{ // 系统配置
 		auth.GET("/api/sys/config", service.GetRunConf)
 		auth.POST("/api/sys/config", service.SetRunConf)
+	}
+
+	{ // 插件管理（需要管理员权限）
+		auth.GET("/api/plugin", service.PluginFindAllAdmin)
+		auth.GET("/api/plugin/:id", service.PluginFindByID)
+		auth.POST("/api/plugin", service.PluginCreate)
+		auth.PUT("/api/plugin", service.PluginUpdateById)
+		auth.DELETE("/api/plugin/:id", service.PluginDeleteById)
+		auth.PATCH("/api/plugin/:id/status", service.PluginToggleStatus)
+	}
+
+	{ // 插件API（不需要认证，通过plugin_id进行验证）
+		auth.POST("/api/plugin/exec_ssh", service.PluginExecSSHCommand)
+	}
+
+	{ // 插件前端页面访问
+		// 这里使用通配符路由，捕获所有/plugin/开头的请求
+		auth.GET("/plugin/*filepath", func(c *gin.Context) {
+			// 解析插件名称和文件路径
+			pathParts := strings.Split(c.Param("filepath"), "/")
+			if len(pathParts) < 2 {
+				c.JSON(404, gin.H{"code": 404, "msg": "插件路径格式错误"})
+				return
+			}
+
+			pluginName := pathParts[1]
+			var filePath string
+			if len(pathParts) > 2 {
+				filePath = strings.Join(pathParts[2:], "/")
+			}
+
+			// 查询插件信息
+			plugin, err := (&model.Plugin{}).FindByName(pluginName)
+			if err != nil || plugin.Status != "enabled" {
+				c.JSON(404, gin.H{"code": 404, "msg": "插件不存在或已禁用"})
+				return
+			}
+
+			// 如果没有指定文件路径，默认使用入口文件
+			if filePath == "" {
+				filePath = plugin.EntryFile
+			}
+
+			// 构建完整的文件路径
+			fullPath := path.Join(plugin.Path, filePath)
+
+			// 检查文件是否存在
+			if _, err := os.Stat(fullPath); os.IsNotExist(err) {
+				c.JSON(404, gin.H{"code": 404, "msg": "文件不存在"})
+				return
+			}
+
+			// 提供文件服务
+			c.File(fullPath)
+		})
 	}
 
 	address := fmt.Sprintf("%s:%s", config.DefaultConfig.Address, config.DefaultConfig.Port)

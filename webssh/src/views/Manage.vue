@@ -9,6 +9,7 @@
           <LoginAudit></LoginAudit>
           <SshdUser></SshdUser>
           <SshdCert></SshdCert>
+          <PluginManage></PluginManage>
         </el-tabs>
       </div>
     </el-main>
@@ -25,6 +26,7 @@ import NetFilter from "@/components/NetFilter.vue";
 import LoginAudit from "@/components/LoginAudit.vue";
 import SshdUser from "@/components/SshdUser.vue";
 import SshdCert from "@/components/SshdCert.vue";
+import PluginManage from "@/components/PluginManage.vue";
 
 let router = useRouter();
 let globalStore = useGlobalStore();

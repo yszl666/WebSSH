@@ -1,0 +1,14 @@
+{
+  "name": "simple_plugin",
+  "title": "简单插件示例",
+  "description": "一个演示如何通过HTTP请求调用执行SSH命令接口的简单插件",
+  "version": "1.0.0",
+  "author": "WebSSH",
+  "entry": "dist/index.html",
+  "icon": "",
+  "permissions": ["execute_ssh_command"],
+  "config": {
+    "requires_session": true,
+    "supports_multi_session": false
+  }
+}

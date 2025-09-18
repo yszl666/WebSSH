@@ -146,6 +146,7 @@
 
             <!-- admin 角色才能管理 -->
             <el-button v-if="globalStore.isAdmin === 'Y'" type="danger" :icon="Coin" @click="toManage">管理</el-button>
+            <el-button v-if="globalStore.isAdmin === 'Y'" type="primary" :icon="Grid" @click="toPlugin">插件</el-button>
             <!-- <el-popconfirm v-if="globalStore.isAdmin === 'Y'" confirmButtonText="确定" cancelButtonText="取消"
               icon="el-icon-info" iconColor="red" title="确定离开此页面吗" @confirm="toManage">
               <template #reference>
@@ -452,6 +453,13 @@
       <el-dialog title="系统管理" v-model="data.manage_dialog_visible" v-bind:fullscreen="true">
         <Manage></Manage>
       </el-dialog>
+      
+      <!-- 插件管理 -->
+      <el-dialog title="插件管理" v-model="data.plugin_dialog_visible" v-bind:fullscreen="true">
+        <el-tabs v-model="data.active_tab" type="card">
+          <PluginManage></PluginManage>
+        </el-tabs>
+      </el-dialog>
     </div>
 
     <div v-if="data.host_tabs.length === 0">
@@ -526,7 +534,7 @@
 import { computed, nextTick, onBeforeUnmount, onMounted, reactive, ref, defineAsyncComponent } from "vue";
 import { useRouter } from "vue-router";
 import { ElMessage, ElNotification, ElPopover } from "element-plus";
-import { FolderOpened, Files, Bottom, Upload, Menu, CirclePlus, Coin, Sort, Edit, Setting, User, CircleClose, Star } from "@element-plus/icons-vue";
+import { FolderOpened, Files, Bottom, Upload, Menu, CirclePlus, Coin, Sort, Edit, Setting, User, CircleClose, Star, Grid } from "@element-plus/icons-vue";
 import axios, { type AxiosProgressEvent } from "axios";
 import { useGlobalStore } from "@/stores/store";
 import { Terminal } from "@xterm/xterm";
@@ -534,6 +542,7 @@ import { AttachAddon } from "@xterm/addon-attach";
 import { FitAddon } from "@xterm/addon-fit";
 import "@xterm/xterm/css/xterm.css";
 import Empty from "./Empty.vue";
+import PluginManage from "@/components/PluginManage.vue";
 const Manage = defineAsyncComponent(() => import('./Manage.vue'))
 
 
@@ -658,6 +667,8 @@ let data = reactive({
   file_dialog_visible: false,
   modify_pwd_dialog_visible: false,
   manage_dialog_visible: false,
+  plugin_dialog_visible: false,
+  active_tab: 'pluginManage',
   dir_info: {} as DirInfo,
   sftp_current_dir: "",
   sftp_upload_percentage: 0,
@@ -1631,6 +1642,13 @@ function reportConnectStatus() {
 function toManage() {
   //router.push({ name: "Manage" });
   data.manage_dialog_visible = true;
+}
+
+/**
+ * 跳转到插件管理页面
+ */
+function toPlugin() {
+  data.plugin_dialog_visible = true;
 }
 
 /**
